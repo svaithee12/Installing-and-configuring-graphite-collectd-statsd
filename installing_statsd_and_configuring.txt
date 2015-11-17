@@ -1,0 +1,74 @@
+1. Install statsd
+	
+	a) sudo apt-get install git nodejs npm devscripts debhelper
+
+	b) create build directory to hold the statsd package
+
+		mkdir ~/build
+	
+	
+	c) move into the directory and clone the statsd repo 
+		
+		cd ~/build
+		git clone https://github.com/etsy/statsd.git
+
+	d) Build and Install the Package
+
+		cd statsd
+
+		dpkg-buildpackage
+
+	e) move out to ~/build directory , stop the carbon daemon and install the statsd package
+
+	
+		cd .. 
+		
+		sudo service carbon-cache stop
+
+		sudo dpkg -i statsd*.deb
+
+	NOTE : If the install fails or throws a warning (JSON/npm warning),  continue.
+  
+
+
+	f) create a file "localConfig.js"
+
+			sudo nano /etc/statsd/localConfig.js
+
+	g) add the following lines to that 
+
+		{
+  			graphitePort: 2003
+			, graphiteHost: "localhost"
+			, port: 8125
+			, graphite: {
+			    legacyNamespace: false
+			  }
+		}
+
+
+2. Create a Storage Schema for StatsD
+
+	sudo nano /etc/carbon/storage-schemas.conf
+
+	and add the following lines 
+	
+		[statsd]
+		pattern = ^stats.*
+		retentions = 10s:1d,1m:7d,10m:1y
+
+4. start the services 
+
+	sudo service carbon-cache stop      ## wait a few seconds here
+	sudo service carbon-cache start
+
+	sudo service statsd start
+
+
+
+NOTE : statsd will appear in the web interface 
+
+
+
+
+

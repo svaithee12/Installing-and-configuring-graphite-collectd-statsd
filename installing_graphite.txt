@@ -1,0 +1,127 @@
+The following steps are to install and configure Graphite on Ubuntu 14.04  :
+
+
+1. install graphite 
+
+sudo apt-get update
+sudo apt-get install graphite-web graphite-carbon 
+
+
+2. configuring a database for Django 
+
+       a) Install PostgreSQL Components :
+	  sudo apt-get install postgresql libpq-dev python-psycopg2
+
+       b) Creating user and DB for postgre
+	  sudo -u postgres psql
+          CREATE USER graphite WITH PASSWORD 'password';
+          CREATE DATABASE graphite WITH OWNER graphite;
+          \q
+
+3. configuring the graphite web app 
+
+	a) open the local_settings file 
+
+	sudo nano /etc/graphite/local_settings.py
+	
+	and modify the following atrributes :
+		
+		SECRET_KEY = 'a_salty_string'
+		TIME_ZONE = 'America/New_York'  (Asia/Calcutta NOT WORKING)
+		USE_REMOTE_USER_AUTHENTICATION = True
+
+	now look for Database dictionary definition :
+
+		DATABASES = {
+   				 'default': {
+        			'NAME': 'graphite',
+			        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+			        'USER': 'graphite',
+			        'PASSWORD': 'password',
+			        'HOST': '127.0.0.1',
+			        'PORT': ''
+			    }
+			}
+	SAVE and CLOSE the file.
+
+
+4. Sync the DB
+	sudo graphite-manage syncdb
+
+5. Configuring Carbon (Carbon is a daemon that runs constantly in the background. Its main job is to take in statistics from the network and write them to disk.)
+
+	to make it run at boot :
+
+		open the service conf file 
+		sudo nano /etc/default/graphite-carbon
+		
+		and change the value to true 
+		 CARBON_CACHE_ENABLED=true
+	
+		SAVE and CLOSE the file 
+
+
+	now open conf file :
+
+	sudo nano /etc/carbon/carbon.conf
+	and change the value 
+	ENABLE_LOGROTATION = True
+	
+	SAVE and CLOSE the file
+
+6. Configuring Storage schemas :
+
+	sudo nano /etc/carbon/storage-schemas.conf
+	
+	This tells Carbon how long to store values and how detailed these values should be.
+	
+	example : 
+	[default_1min_for_1day]     // lable name
+	pattern = .*		    // pattern to catch
+	retentions = 60s:1d         // 60s is how often a metric is recorded   and 1d is length of time to store those values
+
+7. Storage aggregation configuration
+
+	copy the example configuration files :
+
+	sudo cp /usr/share/doc/graphite-carbon/examples/storage-aggregation.conf.example /etc/carbon/storage-aggregation.conf
+
+	the default is to take average. but we can configure it to take min, max etc	
+
+	example :
+	[min]
+	pattern = \.min$
+	xFilesFactor = 0.1
+	aggregationMethod = min
+	
+	The XFilesFactor is a parameter which allows you to specify the minimum percentage of values that Carbon should have to do the aggregation
+
+
+	Note: It is important to realize that if you send Graphite data points more frequently than the shortest archive interval length, some of your data will be lost!
+	
+	SAVE and CLOSE the file
+
+
+8. START carbon 
+
+	sudo service carbon-cache start
+
+
+9. Install and Configure Apache
+
+	sudo apt-get install apache2 libapache2-mod-wsgi
+	
+	disabling default virtual host file 
+		sudo a2dissite 000-default
+
+	copy the Graphite Apache virtual host file into the available sites directory:
+		sudo cp /usr/share/graphite-web/apache2-graphite.conf /etc/apache2/sites-available
+
+	 enable the virtual host file :	
+		sudo a2ensite apache2-graphite
+	
+	sudo service apache2 reload
+
+
+10. checkout the web interface from the browser
+

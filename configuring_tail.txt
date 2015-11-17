@@ -1,0 +1,56 @@
+this is to coinfigure the collectd tail plugin to send data to graphite
+
+
+
+1. open the collectd conf file
+
+	sudo nano /etc/collectd.conf
+
+	if not, 
+		sudo nano /etc/collectd,conf
+
+2. un-comment the "LoadPlugin tail" line
+
+
+3. un-comment the tail plugin definition and modify it to obtain the desired output
+
+
+ <Plugin "tail">
+  <File "/root/var/log/cron">        # file to read from 
+    Instance "cron_logs"             # name that will appear at the dropdown on graphite
+
+#   to look for lines that contain the string vaithee
+
+    <Match>
+      Regex ".*vaithee.*"
+      DSType "CounterInc"
+      Type "counter"
+      Instance "fc-assets"
+    </Match>
+
+# to catch any line 
+
+    <Match>
+      Regex ".*"
+      DSType "CounterInc"
+      Type "counter"
+      Instance "sab_kuch"
+    </Match>
+
+    </File>
+</Plugin>
+
+
+
+It supports POSIX Regex.
+
+
+restart the collectd service
+
+sudo service collectd restart
+
+
+Now graphite is ready to render the log data .
+
+
+
