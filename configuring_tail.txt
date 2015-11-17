@@ -1,4 +1,4 @@
-this is to coinfigure the collectd tail plugin to send data to graphite
+this is to coinfigure the collectd tail plugin  . (writes to graphite using write_graphite plugin)
 
 
 

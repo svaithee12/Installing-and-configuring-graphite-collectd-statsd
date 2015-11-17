@@ -1,0 +1,63 @@
+1. Install Collectd
+
+	sudo apt-get update
+	sudo apt-get install collectd collectd-utils
+
+2. Configure Collectd
+	
+	sudo nano /etc/collectd/collectd.conf
+
+
+	and make the following changes 
+
+		Hostname "graph_host"  // name that would appear on the dropdown of graphite
+
+		un-comment the following 
+			LoadPlugin cpu
+			LoadPlugin df
+			LoadPlugin entropy
+			LoadPlugin interface
+			LoadPlugin load
+			LoadPlugin memory
+			LoadPlugin processes
+			LoadPlugin rrdtool
+			LoadPlugin users
+			LoadPlugin write_graphite   // to write to graphite
+
+
+		and make changes in the following definitions 
+	
+	<Plugin write_graphite>
+    		<Node "graphing">
+        		Host "server_ip"
+        		Port "2003"
+        		Protocol "tcp"
+        		LogSendErrors true
+        		Prefix "collectd."
+        		StoreRates true
+        		AlwaysAppendDS false
+        		EscapeCharacter "_"
+    		</Node>
+	</Plugin>	
+
+
+3. to configure storage schema for data that collectd collects
+
+	sudo nano /etc/carbon/storage-schemas.conf
+
+	add the following lines 
+
+	[collectd]
+	pattern = ^collectd.*
+	retentions = 10s:1d,1m:7d,10m:1y
+
+
+4. reload the services 
+
+	sudo service carbon-cache stop          ## wait a few seconds here
+	sudo service carbon-cache start
+
+
+	sudo service collectd stop
+	sudo service collectd start
+
