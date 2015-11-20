@@ -41,7 +41,7 @@
 	</Plugin>	
 
 
-3. to configure storage schema for data that collectd collects
+3. to configure storage schema for data that collectd collects ( AT SERVER )
 
 	sudo nano /etc/carbon/storage-schemas.conf
 
@@ -54,10 +54,11 @@
 
 4. reload the services 
 
+	AT SERVER
 	sudo service carbon-cache stop          ## wait a few seconds here
 	sudo service carbon-cache start
 
-
+	AT CLIENT
 	sudo service collectd stop
 	sudo service collectd start
 
