@@ -4,10 +4,10 @@ this is to coinfigure the collectd tail plugin  . (writes to graphite using writ
 
 1. open the collectd conf file
 
-	sudo nano /etc/collectd.conf
+	sudo nano /etc/collectd/collectd.conf
 
 	if not, 
-		sudo nano /etc/collectd,conf
+		sudo nano /etc/collectd.conf
 
 2. un-comment the "LoadPlugin tail" line
 
@@ -16,27 +16,35 @@ this is to coinfigure the collectd tail plugin  . (writes to graphite using writ
 
 
  <Plugin "tail">
-  <File "/root/var/log/cron">        # file to read from 
-    Instance "cron_logs"             # name that will appear at the dropdown on graphite
+  <File "/var/log/nginx/access.log">        # file to read from 
+    Instance "NGINX_LOG"             # name that will appear at the dropdown on graphite
 
-#   to look for lines that contain the string vaithee
+
 
     <Match>
-      Regex ".*vaithee.*"
+      Regex ".*200.*"
       DSType "CounterInc"
       Type "counter"
-      Instance "fc-assets"
+      Instance "200-requests"
     </Match>
 
 # to catch any line 
 
     <Match>
-      Regex ".*"
+      Regex ".*400.*"
       DSType "CounterInc"
       Type "counter"
-      Instance "sab_kuch"
+      Instance "400-requests"
     </Match>
 
+
+    <Match>
+      Regex ".*500.*"
+      DSType "CounterInc"
+      Type "counter"
+      Instance "500-requests"
+    </Match>
+    
     </File>
 </Plugin>
 
