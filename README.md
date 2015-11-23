@@ -1,9 +1,11 @@
 # Installing-and-configuring-graphite-collectd-statsd
 This repository contains the documentation to install and configure graphite, collectd and statsd .
 
-install graphite.
-install collectd at client and configure.
-install tail plugin at client.
+1. install graphite.
+
+2. install collectd at client and configure.
+
+3. install tail plugin at client.
 
 
 1. Collectd collects data from its plugins and writes to graphite using the write_graphite plugin.
