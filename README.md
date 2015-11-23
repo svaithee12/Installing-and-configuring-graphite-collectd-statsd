@@ -2,7 +2,7 @@
 This repository contains the documentation to install and configure graphite, collectd and statsd .
 
 install graphite.
-install collectd at server and at client and configure.
+install collectd at client and configure.
 install tail plugin at client.
 
 
