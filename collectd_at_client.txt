@@ -6,6 +6,9 @@
 2. Configure Collectd
 	
 	sudo nano /etc/collectd/collectd.conf
+	
+	if not , 
+		sudo nano /etc/collectd.conf		
 
 
 	and make the following changes 
