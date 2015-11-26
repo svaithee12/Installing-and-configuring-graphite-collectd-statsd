@@ -32,7 +32,7 @@ this is to coinfigure the collectd tail plugin  . (writes to graphite using writ
 # to catch any line 
 
     <Match>
-      Regex ".*HTTP/1.1" 40[0-9].*"
+      Regex ".*payemnt.*HTTP/1.1" 40[0-9].*"
       DSType "CounterInc"
       Type "counter"
       Instance "400-requests"
@@ -40,7 +40,7 @@ this is to coinfigure the collectd tail plugin  . (writes to graphite using writ
 
 
     <Match>
-      Regex ".*HTTP/1.1" 50[0-9].*"
+      Regex ".*((POST)|(GET)) \/payment.*HTTP\/1.1" 50[0-9].*"
       DSType "CounterInc"
       Type "counter"
       Instance "500-requests"
